@@ -1,4 +1,5 @@
-import { chromium, devices } from "playwright";
+import type { Browser } from "playwright-core";
+import { launchChromium, devices } from "./chromium-launcher";
 import type { ScrapedItem, ScraperResult } from "./types";
 
 /* Coles is behind Akamai Bot Manager. The challenge solves cleanly under an
@@ -8,12 +9,9 @@ import type { ScrapedItem, ScraperResult } from "./types";
 
 export async function scrapeColes(query: string): Promise<ScraperResult> {
   const start = Date.now();
-  let browser = null as Awaited<ReturnType<typeof chromium.launch>> | null;
+  let browser: Browser | null = null;
   try {
-    browser = await chromium.launch({
-      headless: true,
-      args: ["--disable-blink-features=AutomationControlled", "--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    browser = await launchChromium();
     const ctx = await browser.newContext({
       ...devices["iPhone 13"],
       locale: "en-AU",

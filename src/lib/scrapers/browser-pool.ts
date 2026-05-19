@@ -1,4 +1,5 @@
-import { chromium, devices, type Browser, type BrowserContext } from "playwright";
+import type { Browser, BrowserContext } from "playwright-core";
+import { launchChromium, devices } from "./chromium-launcher";
 
 /* Singleton headless Chromium that survives between requests.
  * Coles uses Akamai Bot Manager — desktop fingerprints get flagged after
@@ -7,12 +8,6 @@ import { chromium, devices, type Browser, type BrowserContext } from "playwright
 
 let browserPromise: Promise<Browser> | null = null;
 let contextPromise: Promise<BrowserContext> | null = null;
-
-const STEALTH_ARGS = [
-  "--disable-blink-features=AutomationControlled",
-  "--no-sandbox",
-  "--disable-setuid-sandbox",
-];
 
 const STEALTH_INIT = `
   Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
@@ -23,7 +18,7 @@ const STEALTH_INIT = `
 
 async function getBrowser(): Promise<Browser> {
   if (!browserPromise) {
-    browserPromise = chromium.launch({ headless: true, args: STEALTH_ARGS });
+    browserPromise = launchChromium();
   }
   return browserPromise;
 }

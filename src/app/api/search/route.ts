@@ -3,6 +3,11 @@ import { aggregateSearch } from "@/lib/scrapers";
 import type { SearchResponse, Product } from "@/lib/types";
 import type { StoreId } from "@/lib/stores";
 
+// Chromium scrape can take 10–25s; force Node runtime and allow up to 60s.
+export const runtime = "nodejs";
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
 /* /api/search — Live aggregator (no sample data).
  *   Woolworths · Coles · ALDI · IGA scraped directly from their public sites.
  *   Costco kept in the retailer list but membership-walled, returns no offers.
