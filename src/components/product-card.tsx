@@ -132,7 +132,7 @@ export function ProductCard({ product, storeFilter, hideOOS }: Props) {
                     <span className="text-muted-foreground">· {offer.distanceKm}km</span>
                   )}
                   {!offer.inStock && (
-                    <Badge variant="destructive" className="text-[9px] px-1.5 py-0 bg-destructive text-destructive-foreground">
+                    <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
                       Out of stock
                     </Badge>
                   )}
