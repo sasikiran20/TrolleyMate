@@ -149,7 +149,7 @@ function DataStatusBanner({ data }: { data: import("@/lib/types").SearchResponse
           {live > 0 ? (
             <>
               <strong>{live} live offer{live === 1 ? "" : "s"} scraped just now</strong>{" "}
-              from {liveRetailers.join(", ")}. Other retailers show typical 2025 prices.
+              from {liveRetailers.join(", ")}.
             </>
           ) : (
             <>
