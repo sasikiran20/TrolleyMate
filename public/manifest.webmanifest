@@ -1,0 +1,34 @@
+{
+  "name": "TrolleyMate AU — Grocery price compare",
+  "short_name": "TrolleyMate",
+  "description": "Compare grocery prices across Woolworths, Coles, ALDI, IGA, Big W, Kmart, Target and Costco — online and in-store.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "categories": ["shopping", "lifestyle", "food"],
+  "lang": "en-AU",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search products",
+      "short_name": "Search",
+      "url": "/search"
+    },
+    {
+      "name": "This week's deals",
+      "short_name": "Deals",
+      "url": "/deals"
+    }
+  ]
+}
