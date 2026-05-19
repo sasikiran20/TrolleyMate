@@ -18,8 +18,13 @@ import type { ScrapedItem, ScraperResult } from "./types";
  * offer list for that product. We never invent prices.
  * ============================================================================ */
 
-const FAST_TIMEOUT_MS = 8_000;   // JSON-API scrapers
-const SLOW_TIMEOUT_MS = 35_000;  // Playwright-based scrapers (Coles)
+const IS_LAMBDA =
+  !!process.env.AWS_LAMBDA_FUNCTION_NAME || !!process.env.AWS_EXECUTION_ENV;
+
+// On Lambda, Amplify's gateway cuts the response at ~30s, so Coles must finish
+// (or fail) within ~22s to leave headroom for serialization + the other scrapers.
+const FAST_TIMEOUT_MS = 8_000;
+const SLOW_TIMEOUT_MS = IS_LAMBDA ? 22_000 : 35_000;
 
 function pickEmoji(name: string): { emoji: string; bg: string } {
   const n = name.toLowerCase();

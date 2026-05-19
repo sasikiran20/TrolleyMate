@@ -2,6 +2,16 @@ import type { Browser } from "playwright-core";
 import { launchChromium, devices } from "./chromium-launcher";
 import type { ScrapedItem, ScraperResult } from "./types";
 
+const IS_LAMBDA =
+  !!process.env.AWS_LAMBDA_FUNCTION_NAME || !!process.env.AWS_EXECUTION_ENV;
+
+// Internal step timeouts tuned for Amplify's 30s gateway cap.
+// Sum must stay under SLOW_TIMEOUT_MS (22s) in src/lib/scrapers/index.ts.
+const HOMEPAGE_TIMEOUT = IS_LAMBDA ? 8_000 : 20_000;
+const AKAMAI_WARMUP_MS = IS_LAMBDA ? 1_500 : 3_000;
+const SEARCH_TIMEOUT = IS_LAMBDA ? 10_000 : 25_000;
+const TILE_TIMEOUT = IS_LAMBDA ? 6_000 : 20_000;
+
 /* Coles is behind Akamai Bot Manager. The challenge solves cleanly under an
  * iPhone device emulation, but the session state goes stale fast — so we
  * always launch a FRESH Chromium for each scrape. Slower (6–8 s) but never
@@ -25,17 +35,17 @@ export async function scrapeColes(query: string): Promise<ScraperResult> {
     const page = await ctx.newPage();
 
     // Step 1: prime Akamai cookies on the homepage
-    await page.goto("https://www.coles.com.au/", { waitUntil: "domcontentloaded", timeout: 20_000 });
-    await page.waitForTimeout(3000);
+    await page.goto("https://www.coles.com.au/", { waitUntil: "domcontentloaded", timeout: HOMEPAGE_TIMEOUT });
+    await page.waitForTimeout(AKAMAI_WARMUP_MS);
 
     // Step 2: search
     await page.goto(`https://www.coles.com.au/search?q=${encodeURIComponent(query)}`, {
       waitUntil: "domcontentloaded",
-      timeout: 25_000,
+      timeout: SEARCH_TIMEOUT,
     });
 
     const found = await page
-      .waitForSelector('[data-testid="product-tile"]', { timeout: 20_000 })
+      .waitForSelector('[data-testid="product-tile"]', { timeout: TILE_TIMEOUT })
       .then(() => true)
       .catch(() => false);
     if (!found) {
